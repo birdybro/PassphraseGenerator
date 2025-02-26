@@ -1,0 +1,175 @@
+﻿<Window x:Class="PassphraseGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Passphrase Generator" Height="450" Width="600">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+            <Label Content="Dark Mode:" VerticalAlignment="Center"
+                   Style="{DynamicResource BaseLabelStyle}"/>
+            <ToggleButton x:Name="ThemeToggle" Width="50" Height="24" Margin="5,0,0,0"
+                  IsChecked="{Binding IsDarkTheme}"
+                  Click="ThemeToggle_Click">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Border" 
+                                    CornerRadius="12"
+                                    Background="#ECECEC"
+                                    Width="50" Height="24">
+                                        <Border x:Name="Indicator"
+                                        Width="18" Height="18"
+                                        CornerRadius="9"
+                                        Background="White"
+                                        HorizontalAlignment="Left"
+                                        Margin="3,0,0,0"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#3498DB"/>
+                                            <Setter TargetName="Indicator" Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter TargetName="Indicator" Property="Margin" Value="0,0,3,0"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+        </StackPanel>
+        
+        <!-- Generated Passphrase Display -->
+        <TextBox Grid.Row="1" x:Name="PassphraseTextBox" 
+                 Style="{DynamicResource BaseTextBoxStyle}"
+                 FontSize="18" Padding="10" IsReadOnly="True"
+                 TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+        <!-- Options -->
+        <GroupBox Grid.Row="2" Header="Options" Margin="0,0,0,20"
+                  Style="{DynamicResource BaseGroupBoxStyle}">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Number of Words:"
+                       Style="{DynamicResource BaseLabelStyle}"/>
+                <Slider Grid.Row="0" Grid.Column="1" Minimum="3" Maximum="10" 
+                        Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                        x:Name="WordCountSlider" VerticalAlignment="Center"
+                        ValueChanged="PreferenceControl_Changed"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ElementName=WordCountSlider, Path=Value, StringFormat='{}{0}'}"
+                           VerticalAlignment="Center" Margin="5,0"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Separator:"
+                       Style="{DynamicResource BaseLabelStyle}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="SeparatorComboBox" SelectedIndex="0"
+                          Style="{DynamicResource BaseComboBoxStyle}"
+                          SelectionChanged="PreferenceControl_Changed">
+                    <ComboBoxItem Content="Hyphen (-)" Style="{DynamicResource BaseComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="Dot (.)" Style="{DynamicResource BaseComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="Space ( )" Style="{DynamicResource BaseComboBoxItemStyle}"/>
+                    <ComboBoxItem Content="None" Style="{DynamicResource BaseComboBoxItemStyle}"/>
+                </ComboBox>
+
+                <Label Grid.Row="1" Grid.Column="2" Content="Capitalize:"
+                       Style="{DynamicResource BaseLabelStyle}"/>
+                <CheckBox Grid.Row="1" Grid.Column="3" x:Name="CapitalizeCheckBox" 
+                          VerticalAlignment="Center" Checked="PreferenceControl_Changed" 
+                          Unchecked="PreferenceControl_Changed"/>
+                
+                <Label Grid.Row="2" Grid.Column="0" Content="Add Number:"
+                       Style="{DynamicResource BaseLabelStyle}"/>
+                <CheckBox Grid.Row="2" Grid.Column="1" x:Name="AddNumberCheckBox" 
+                          VerticalAlignment="Center" Checked="PreferenceControl_Changed" 
+                          Unchecked="PreferenceControl_Changed"/>
+
+                <Label Grid.Row="2" Grid.Column="2" Content="Add Symbol:"
+                       Style="{DynamicResource BaseLabelStyle}"/>
+                <CheckBox Grid.Row="2" Grid.Column="3" x:Name="AddSymbolCheckBox" 
+                          VerticalAlignment="Center" Checked="PreferenceControl_Changed" 
+                          Unchecked="PreferenceControl_Changed"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <Button x:Name="GenerateButton" Content="Generate Passphrase" Style="{DynamicResource BaseButtonStyle}" Padding="15,8" Margin="0,0,10,0" Click="GenerateButton_Click"/>
+            <Button x:Name="CopyButton" Content="Copy to Clipboard" Style="{DynamicResource BaseButtonStyle}" Padding="15,8" Click="CopyButton_Click"/>
+            <Button x:Name="ResetButton" Content="Reset Settings" Style="{DynamicResource BaseButtonStyle}" Padding="15,8" Margin="10,0,0,0" Click="ResetButton_Click"/>
+        </StackPanel>
+
+        <!-- Strength Indicator -->
+        <GroupBox Grid.Row="4" Margin="0,0,0,10" 
+          Style="{DynamicResource BaseGroupBoxStyle}">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Passphrase Strength" VerticalAlignment="Center"/>
+                    <Button x:Name="InfoButton" Content="?" Width="20" Height="20" Margin="5,0,0,0"
+                FontSize="10" FontWeight="Bold" Background="Transparent"
+                BorderBrush="{StaticResource BorderBrush}" Click="InfoButton_Click"/>
+                </StackPanel>
+            </GroupBox.Header>
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Progress Bar -->
+                <ProgressBar Grid.Row="0" Grid.ColumnSpan="2" x:Name="StrengthIndicator" 
+                     Height="20" Minimum="0" Maximum="100" Value="0" Margin="0,0,0,10"/>
+
+                <!-- Entropy Value -->
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Entropy:" 
+                   Style="{DynamicResource TextBlockStyle}" FontWeight="Bold" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="EntropyValueText" 
+                   Style="{DynamicResource TextBlockStyle}" Text="0 bits"/>
+
+                <!-- Strength Rating -->
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Rating:" 
+                   Style="{DynamicResource TextBlockStyle}" FontWeight="Bold" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="StrengthRatingText" 
+                   Style="{DynamicResource TextBlockStyle}" Text="N/A"/>
+
+                <!-- Time to Crack Estimate -->
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Security:" 
+                   Style="{DynamicResource TextBlockStyle}" FontWeight="Bold" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="CrackTimeText" 
+                   Style="{DynamicResource TextBlockStyle}" Text="N/A"/>
+            </Grid>
+        </GroupBox>
+
+        <StatusBar Grid.Row="5" VerticalAlignment="Bottom"
+                   Style="{DynamicResource BaseStatusBarStyle}">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Ready" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
