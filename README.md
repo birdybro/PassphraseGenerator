@@ -3,6 +3,8 @@ A C# WPF Passphrase Generator developed entirely by Claude Sonnet 3.7 (Reasoning
 
 https://t3.chat/chat/12d6bf7e-a07c-420a-ae9a-f10d52f7f8df
 
+Wordlist source --> https://github.com/sts10/orchard-street-wordlists/blob/main/lists/orchard-street-medium.txt
+
 ## Prompts and Responses from Claude Sonnet 3.7 (Reasoning)
 
 Prompt:
